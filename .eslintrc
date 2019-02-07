@@ -1,18 +1,22 @@
 {
-    "parser": "babel-eslint",
-    "extends": "airbnb",
-    "ecmaFeatures": {
-      "arrowFunctions": true,
-      "blockBindings": true,
-      "templateStrings": true,
-      "generators": true,
-      "classes": true,
-      "modules": true,
-      "forOf": true,
-      "jsx": true,
-      "objectLiteralComputedProperties": true
-    },
-    "env": {
-      "browser": true
-    }
+  "parser": "babel-eslint",
+  "extends": "airbnb",
+  "ecmaFeatures": {
+    "arrowFunctions": true,
+    "blockBindings": true,
+    "templateStrings": true,
+    "generators": true,
+    "classes": true,
+    "modules": true,
+    "forOf": true,
+    "jsx": true,
+    "objectLiteralComputedProperties": true
+  },
+  "rules": {
+    "comma-dangle": "off",
+    "arrow-parens": "off"
+  },
+  "env": {
+    "browser": true
+  }
 }

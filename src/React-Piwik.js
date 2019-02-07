@@ -2,19 +2,25 @@ export default class Piwik {
   constructor(opts) {
     const options = opts;
 
-    options.enableLinkTracking = (options.enableLinkTracking !== undefined) ?
-                                    options.enableLinkTracking : true;
-    options.trackDocumentTitle = (options.trackDocumentTitle !== undefined) ?
-                                    options.trackDocumentTitle : true;
-    options.jsFilename = (options.jsFilename !== undefined) ?
-                                    options.jsFilename : 'piwik.js';
-    options.phpFilename = (options.phpFilename !== undefined) ?
-                                    options.phpFilename : 'piwik.php';
+    options.enableLinkTracking =
+      options.enableLinkTracking !== undefined
+        ? options.enableLinkTracking
+        : true;
+    options.trackDocumentTitle =
+      options.trackDocumentTitle !== undefined
+        ? options.trackDocumentTitle
+        : true;
+    options.jsFilename =
+      options.jsFilename !== undefined ? options.jsFilename : 'piwik.js';
+    options.phpFilename =
+      options.phpFilename !== undefined ? options.phpFilename : 'piwik.php';
 
     this.options = options;
 
     if (this.options.url === undefined || this.options.siteId === undefined) {
-      throw new Error('PiwikTracker cannot be initialized! SiteId and url are mandatory.');
+      throw new Error(
+        'PiwikTracker cannot be initialized! SiteId and url are mandatory.'
+      );
     }
 
     this.initPiwik();
@@ -24,10 +30,20 @@ export default class Piwik {
     if (typeof window !== 'undefined') {
       let url = this.options.url;
 
-      if (url.indexOf('http://') !== -1 || url.indexOf('https://') !== -1) {
+      // WORKAROUND, added this first case to allow for local paths, proxied to piwik,
+      // to prevent ad-blocking
+      if (url.charAt(0) === '/') {
+        url = `${url}/`;
+      } else if (
+        url.indexOf('http://') !== -1 ||
+        url.indexOf('https://') !== -1
+      ) {
         url = `${url}/`;
       } else {
-        url = ((document.location.protocol === 'https:') ? `https://${url}/` : `http://${url}/`);
+        url =
+          document.location.protocol === 'https:'
+            ? `https://${url}/`
+            : `http://${url}/`;
       }
 
       window._paq = window._paq || []; // eslint-disable-line  no-underscore-dangle
@@ -48,7 +64,10 @@ export default class Piwik {
 
       let jsFilename = this.options.jsFilename;
 
-      if (jsFilename.indexOf('http://') !== 0 && jsFilename.indexOf('https://') !== 0) {
+      if (
+        jsFilename.indexOf('http://') !== 0 &&
+        jsFilename.indexOf('https://') !== 0
+      ) {
         jsFilename = url + jsFilename;
       }
 
@@ -60,7 +79,7 @@ export default class Piwik {
       push: this.push,
       track: this.track,
       connectToHistory: this.connectToHistory,
-      disconnectFromHistory: this.disconnectFromHistory,
+      disconnectFromHistory: this.disconnectFromHistory
     };
   }
 
@@ -69,9 +88,13 @@ export default class Piwik {
   }
 
   connectToHistory(history) {
-    const prevLoc = (typeof history.getCurrentLocation === 'undefined') ? history.location : history.getCurrentLocation();
-    this.previousPath = prevLoc.path || (prevLoc.pathname + prevLoc.search).replace(/^\//, '');
-    this.unlistenFromHistory = history.listen((loc) => {
+    const prevLoc =
+      typeof history.getCurrentLocation === 'undefined'
+        ? history.location
+        : history.getCurrentLocation();
+    this.previousPath =
+      prevLoc.path || (prevLoc.pathname + prevLoc.search).replace(/^\//, '');
+    this.unlistenFromHistory = history.listen(loc => {
       this.track(loc);
     });
 
@@ -92,7 +115,8 @@ export default class Piwik {
     if (typeof window === 'undefined') {
       return;
     }
-    const currentPath = loc.path || (loc.pathname + loc.search).replace(/^\//, '');
+    const currentPath =
+      loc.path || (loc.pathname + loc.search).replace(/^\//, '');
 
     if (this.previousPath === currentPath) {
       return;
@@ -103,7 +127,10 @@ export default class Piwik {
     }
 
     if (this.previousPath) {
-      Piwik.push(['setReferrerUrl', `${window.location.origin}/${this.previousPath}`]);
+      Piwik.push([
+        'setReferrerUrl',
+        `${window.location.origin}/${this.previousPath}`
+      ]);
     }
     Piwik.push(['setCustomUrl', `${window.location.origin}/${currentPath}`]);
     Piwik.push(['trackPageView']);

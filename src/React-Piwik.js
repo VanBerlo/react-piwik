@@ -32,7 +32,6 @@ export default class Piwik {
 
       // WORKAROUND, added this first case to allow for local paths, proxied to piwik,
       // to prevent ad-blocking
-      console.log('piwik url', url);
       if (url.charAt(0) === '/') {
         url = `${url}/`;
       } else if (
